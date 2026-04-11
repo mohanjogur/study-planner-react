@@ -10,6 +10,9 @@ function App() {
   const [message, setMessage] = useState("");
   const [aiResponse, setAiResponse] = useState("");
 
+  const [xp, setXp] = useState(0);
+  const [streak, setStreak] = useState(0);
+
   // ➕ ADD TASK
   const addTask = () => {
     if (!task) return;
@@ -18,10 +21,16 @@ function App() {
     setTask("");
   };
 
-  // ✔ TOGGLE
+  // ✔ TOGGLE TASK
   const toggleTask = (i) => {
     const updated = [...tasks];
     updated[i].done = !updated[i].done;
+
+    if (updated[i].done) {
+      setXp(xp + 10);
+      setStreak(streak + 1);
+    }
+
     setTasks(updated);
   };
 
@@ -45,17 +54,19 @@ function App() {
 
       const data = await res.json();
       setAiResponse(data.plan);
+
     } catch (err) {
       alert("AI failed ❌");
     }
   };
 
   const completed = tasks.filter((t) => t.done).length;
+  const progress = tasks.length ? (completed / tasks.length) * 100 : 0;
 
   return (
     <div className="app">
-      
-      {/* 🔥 SIDEBAR */}
+
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <h2>⚡ FocusAI</h2>
 
@@ -65,23 +76,28 @@ function App() {
         <p onClick={() => setTab("stats")}>📊 Stats</p>
       </aside>
 
-      {/* 🔥 MAIN */}
+      {/* MAIN */}
       <main className="main">
 
-        {/* 🏠 DASHBOARD */}
+        {/* DASHBOARD */}
         {tab === "dashboard" && (
           <>
             <h1>Dashboard</h1>
 
             <div className="card">
-              <h3>Welcome 👋</h3>
               <p>Total Tasks: {tasks.length}</p>
               <p>Completed: {completed}</p>
+              <p>XP: {xp}</p>
+              <p>🔥 Streak: {streak}</p>
+            </div>
+
+            <div className="progress">
+              <div style={{ width: progress + "%" }}></div>
             </div>
           </>
         )}
 
-        {/* ✅ TASKS */}
+        {/* TASKS */}
         {tab === "tasks" && (
           <>
             <h1>Tasks</h1>
@@ -97,11 +113,7 @@ function App() {
 
             {tasks.map((t, i) => (
               <div key={i} className="task">
-                <span
-                  style={{
-                    textDecoration: t.done ? "line-through" : "none"
-                  }}
-                >
+                <span style={{ textDecoration: t.done ? "line-through" : "none" }}>
                   {t.name}
                 </span>
 
@@ -114,7 +126,7 @@ function App() {
           </>
         )}
 
-        {/* 🤖 AI */}
+        {/* AI */}
         {tab === "ai" && (
           <>
             <h1>AI Coach</h1>
@@ -133,7 +145,7 @@ function App() {
           </>
         )}
 
-        {/* 📊 STATS */}
+        {/* STATS */}
         {tab === "stats" && (
           <>
             <h1>Stats</h1>
@@ -141,7 +153,9 @@ function App() {
             <div className="card">
               <p>Total Tasks: {tasks.length}</p>
               <p>Completed: {completed}</p>
-              <p>Progress: {tasks.length ? (completed / tasks.length) * 100 : 0}%</p>
+              <p>XP: {xp}</p>
+              <p>🔥 Streak: {streak}</p>
+              <p>Progress: {progress.toFixed(0)}%</p>
             </div>
           </>
         )}
