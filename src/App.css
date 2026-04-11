@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: #020617;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  background: linear-gradient(90deg,#6366F1,#22C55E);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.sidebar p {
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.sidebar p:hover {
+  background: #1e293b;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+/* TASK */
+.task {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+/* BUTTON */
+button {
+  background: #6366f1;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* INPUT */
+input {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  margin-right: 10px;
+}
