@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import {
   doc,
   onSnapshot,
@@ -2181,6 +2182,7 @@ function App() {
           </section>
         ) : null}
       </main>
+      <SpeedInsights />
     </div>
   );
 }
