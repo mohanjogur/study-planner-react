@@ -235,7 +235,6 @@ export default function App() {
   const [studyPlan, setStudyPlan] = useState(null);
   const [dailyTip, setDailyTip] = useState(null);
   const [activityLog, setActivityLog] = useState([]);
-  const [achievements, setAchievements] = useState({ earnedBadges: [] });
   const [preview, setPreview] = useState("");
   const [deepDive, setDeepDive] = useState({ topic: "", content: "" });
   const [flashcards, setFlashcards] = useState({ topic: "", cards: [] });
@@ -275,7 +274,7 @@ export default function App() {
         sdt,
         sal,
         sset,
-        sach,
+        ,
         srd,
       ] = values;
       const p = { ...EMPTY_PROFILE, ...(sp || {}) };
@@ -292,7 +291,6 @@ export default function App() {
       setDailyTip(sdt);
       setActivityLog(sal || []);
       setSettings({ ...EMPTY_SETTINGS, ...(sset || {}) });
-      setAchievements(sach || { earnedBadges: [] });
       setResumeDraft(
         srd || {
           ...emptyResumeDraft(),
@@ -331,20 +329,15 @@ export default function App() {
       s.setItem(K.studyPlan, studyPlan);
       s.setItem(K.dailyTip, dailyTip);
       s.setItem(K.activityLog, activityLog);
-      s.setItem(K.settings, settings);
-      s.setItem(K.achievements, achievements);
+      s.setItem(K.settings, { ...settings, lastModule: nav });
       s.setItem(K.resumeDraft, resumeDraft);
     },
-    [booting, profile, generatedResume, resumeTips, atsScore, learningPath, practiceNotes, practicedQuestions, savedQuestions, mockSessions, studyPlan, dailyTip, activityLog, settings, achievements, resumeDraft],
+    [booting, profile, generatedResume, resumeTips, atsScore, learningPath, practiceNotes, practicedQuestions, savedQuestions, mockSessions, studyPlan, dailyTip, activityLog, settings, nav, resumeDraft],
     500,
   );
 
-  useEffect(() => {
-    if (!booting) setSettings((p) => ({ ...p, lastModule: nav }));
-  }, [nav, booting]);
-
-  useEffect(() => {
-    if (booting) return;
+  const achievements = useMemo(() => {
+    if (booting) return { earnedBadges: [] };
     const earned = [];
     if (generatedResume?.sections) earned.push("first_resume");
     if (practicedQuestions.length >= 10) earned.push("ten_questions");
@@ -359,7 +352,7 @@ export default function App() {
       d.setDate(d.getDate() - 1);
     }
     if (streak >= 3) earned.push("practice_streak");
-    setAchievements({ earnedBadges: earned });
+    return { earnedBadges: earned };
   }, [booting, generatedResume, practicedQuestions, learningPath, mockSessions, activityLog]);
 
   const ready = useMemo(
@@ -413,7 +406,12 @@ export default function App() {
   }, [log, profile.domain, profile.experience, profile.targetRole, runText]);
 
   useEffect(() => {
-    if (!booting && nav === "dashboard" && profile.targetRole && dailyTip?.date !== dayKey()) generateTip();
+    if (!booting && nav === "dashboard" && profile.targetRole && dailyTip?.date !== dayKey()) {
+      const t = setTimeout(() => {
+        generateTip();
+      }, 0);
+      return () => clearTimeout(t);
+    }
   }, [booting, nav, profile.targetRole, dailyTip?.date, generateTip]);
 
   const clearScope = useCallback(async () => {
@@ -449,7 +447,6 @@ export default function App() {
       setStudyPlan(null);
       setDailyTip(null);
       setActivityLog([]);
-      setAchievements({ earnedBadges: [] });
       setDeepDive({ topic: "", content: "" });
       setFlashcards({ topic: "", cards: [] });
       setCurrentSession(null);
